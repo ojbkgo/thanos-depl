@@ -1,0 +1,30 @@
+version: '3.1'
+
+volumes:
+    grafana_data: {}
+
+services:
+    thanos-querier:
+        image: thanosio/thanos:v0.13.0
+        command:
+            - 'query'
+            - '--grpc-address=0.0.0.0:10091'
+            - '--http-address=0.0.0.0:10902'
+            - '--query.replica-label=replica'
+            - '--store=sidecar_i1:10091'
+            - '--store=sidecar_i2:10091'
+            - '--store=sidecar_i3:10091'
+        ports:
+            - 10902:10902
+        restart: always
+
+    grafana:
+        image: grafana/grafana:7.0.4
+        ports:
+            - 3000:3000
+        volumes:
+            - grafana_data:/var/lib/grafana
+            - ../../grafana/provisioning/:/etc/grafana/provisioning/
+        env_file:
+            - ./grafana/config.monitoring
+        restart: always

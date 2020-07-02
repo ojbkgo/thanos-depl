@@ -1,0 +1,58 @@
+version: '3.1'
+
+volumes:
+    prometheus_data: {}
+    grafana_data: {}
+    minio_data: {}
+
+services:
+    prometheus:
+        image: prom/prometheus:v2.19.2
+        volumes:
+            - ../../prometheus/:/etc/prometheus/
+            - prometheus_data:/prometheus
+        command:
+            - '--config.file=/etc/prometheus/prometheus.yaml'
+            - '--storage.tsdb.path=/prometheus'
+            - '--storage.tsdb.max-block-duration=30m'
+            - '--storage.tsdb.min-block-duration=30m'
+            - '--web.enable-lifecycle'
+            - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+            - '--web.console.templates=/usr/share/prometheus/consoles'
+        ports:
+            - 9090
+        depends_on:
+          - node-exporter
+        restart: always
+
+    thanos-sidecar:
+        image: thanosio/thanos:v0.13.0
+        container_name: sidecar_i1
+        volumes:
+            - ../../thanos/:/etc/thanos/
+            - prometheus1_data:/prometheus
+        command:
+            - 'sidecar'
+            - '--tsdb.path=/prometheus'
+            - '--prometheus.url=http://prometheus:9090'
+            - '--grpc-address=0.0.0.0:10091'
+            - '--http-address=0.0.0.0:10902'
+            - '--objstore.config-file=/etc/thanos/bucket_config.yaml'
+        depends_on:
+            - prometheus
+        restart: always
+
+    node-exporter:
+        image: prom/node-exporter:v0.18.1
+        volumes:
+            - /proc:/host/proc:ro
+            - /sys:/host/sys:ro
+            - /:/rootfs:ro
+        command:
+            - '--path.procfs=/host/proc'
+            - '--path.sysfs=/host/sys'
+            - --collector.filesystem.ignored-mount-points
+            - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
+        ports:
+            - 9100
+        restart: always
