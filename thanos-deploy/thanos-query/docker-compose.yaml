@@ -18,7 +18,7 @@ services:
             - 10902:10902
         restart: always
         networks:
-            overl
+            - overl
 
     grafana:
         image: grafana/grafana:7.0.4
@@ -31,7 +31,7 @@ services:
             - ./grafana/config.monitoring
         restart: always
         networks:
-          overl
+          - overl
 
 networks:
     overl:

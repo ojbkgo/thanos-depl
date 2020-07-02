@@ -25,7 +25,7 @@ services:
           - node-exporter
         restart: always
         networks:
-          overl
+          - overl
 
     thanos-sidecar:
         image: thanosio/thanos:v0.13.0
@@ -44,7 +44,7 @@ services:
             - prometheus
         restart: always
         networks:
-          overl
+          - overl
 
     node-exporter:
         image: prom/node-exporter:v0.18.1
@@ -61,7 +61,7 @@ services:
             - 9100
         restart: always
         networks:
-          overl
+          - overl
 
 networks:
   overl:
