@@ -17,6 +17,8 @@ services:
         ports:
             - 10902:10902
         restart: always
+        networks:
+            overl
 
     grafana:
         image: grafana/grafana:7.0.4
@@ -28,3 +30,10 @@ services:
         env_file:
             - ./grafana/config.monitoring
         restart: always
+        networks:
+          overl
+
+networks:
+    overl:
+        external: true
+        name: overl

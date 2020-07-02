@@ -24,6 +24,8 @@ services:
         depends_on:
             - node-exporter
         restart: always
+        networks:
+            overl
 
 
     thanos-sidecar:
@@ -42,6 +44,8 @@ services:
         depends_on:
             - prometheus
         restart: always
+        networks:
+            overl
 
     node-exporter:
         image: prom/node-exporter:v0.18.1
@@ -57,3 +61,10 @@ services:
         ports:
             - 9100
         restart: always
+        networks:
+            overl
+
+networks:
+    overl:
+        external: true
+        name: overl
