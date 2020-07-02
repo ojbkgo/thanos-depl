@@ -36,4 +36,3 @@ services:
 networks:
     overl:
         external: true
-        name: overl
