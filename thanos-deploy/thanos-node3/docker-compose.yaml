@@ -33,7 +33,7 @@ services:
         container_name: sidecar_i3
         volumes:
             - ../../thanos/:/etc/thanos/
-            - prometheus1_data:/prometheus
+            - prometheus_data:/prometheus
         command:
             - 'sidecar'
             - '--tsdb.path=/prometheus'
